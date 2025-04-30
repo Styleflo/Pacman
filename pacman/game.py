@@ -38,7 +38,6 @@ class Game:
 
     def exit_game(self) -> None:
         self.__storage_loader.to_file()
-        print("Bye bye")
         exit()
 
     # endregion

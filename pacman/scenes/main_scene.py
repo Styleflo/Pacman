@@ -110,13 +110,13 @@ class MainScene(BaseScene):
         return text
 
     def __create_heroes(self) -> None:
-        self.pacman = Pacman(self.__loader)
         self.inky = Inky(self.__loader, len(self.__seeds))
         self.pinky = Pinky(self.__loader, len(self.__seeds))
         self.clyde = Clyde(self.__loader, len(self.__seeds))
         self.blinky = Blinky(self.__loader, len(self.__seeds))
-
         self.__ghosts = [self.blinky, self.pinky, self.inky, self.clyde]
+
+        self.pacman = Pacman(self.__loader, self)
 
     def __update_score_text(self):
         self.__scores_value_text.text = f"{self.__score} {'Mb' if SkinStorage().equals(SkinEnum.CHROME) else ''}"

@@ -6,11 +6,13 @@ from pacman.storage import SkinStorage
 
 from .character_base import Character
 
+from pacmania import PacManIA
+
 
 class Pacman(Character, IEventful):
     action = {EvenType.UP_BTN: "up", EvenType.LEFT_BTN: "left", EvenType.DONW_BTN: "down", EvenType.RIGHT_BTN: "right"}
 
-    def __init__(self, loader) -> None:
+    def __init__(self, loader, main_scene) -> None:
         skin_instanse = SkinStorage().current_instance
         self.__walk_anim = skin_instanse.walk
         self.__dead_anim = skin_instanse.dead
@@ -19,6 +21,9 @@ class Pacman(Character, IEventful):
         self.__feature_rotate = "none"
         self.__ai_timer = 0
         self.animator.stop()
+
+        # L'IA
+        self.IA = PacManIA.PacManIA(main_scene)
 
     @property
     def dead_anim(self):
@@ -31,6 +36,9 @@ class Pacman(Character, IEventful):
 
     def update(self) -> None:
         self.animator.update()
+
+        feature_rotate = self.IA.get_direction()
+
         if not self.is_dead:
             if CellUtil.is_in_cell_center(self.rect):
                 if self.can_rotate_to(self.rotate):
@@ -38,9 +46,9 @@ class Pacman(Character, IEventful):
                 else:
                     self.stop()
                     self.animator.set_cur_image(0)
-                c = self.direction[self.__feature_rotate][2]
+                c = self.direction[feature_rotate][2]
                 if self.can_rotate_to(c):
-                    self.set_direction(self.__feature_rotate)
+                    self.set_direction(feature_rotate)
             super().update()
 
     def death(self) -> None:

@@ -45,7 +45,6 @@ class BtnController(IDrawable, IEventful):
 
     def __move_up(self) -> None:
         self.__current.deselect()
-        print("coucou")
         self.__active_button_index = (self.__active_button_index - 1) % len(self.__buttons)
         self.__current.select()
 

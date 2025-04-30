@@ -1,8 +1,8 @@
 {
   "_MainStorage__fruit": {
     "_FruitStorage__eaten_fruits": [
-      7,
-      5,
+      8,
+      6,
       0,
       0,
       0,
@@ -12,7 +12,7 @@
     "_FruitStorage__fruit_count": 7
   },
   "_MainStorage__levels": {
-    "_LevelStorage__current": 4,
+    "_LevelStorage__current": 0,
     "_LevelStorage__level_count": 10,
     "_LevelStorage__unlocked": [
       [
@@ -35,9 +35,18 @@
         0
       ],
       [
+        3960,
         0
       ],
       [
+        120,
+        0
+      ],
+      [
+        0
+      ],
+      [
+        40,
         0
       ],
       [
