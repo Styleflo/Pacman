@@ -10,6 +10,7 @@ class SettingsStorage(SerDes):
         self.DIFFICULTY = 0
         self.MUTE = False
         self.__fun = False
+        self.__ia = False
 
     # region Volume
 
@@ -28,6 +29,15 @@ class SettingsStorage(SerDes):
 
     def update_fun(self) -> None:
         self.__fun = not self.__fun
+        event_append(EvenType.UPDATE_SOUND)
+
+    @property
+    def ia(self) -> bool:
+        return self.__ia
+
+    def update_ia(self) -> None:
+        print("bizare")
+        self.__ia = not self.__ia
         event_append(EvenType.UPDATE_SOUND)
 
     # endregion
