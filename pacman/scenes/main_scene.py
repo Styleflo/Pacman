@@ -247,4 +247,7 @@ class MainScene(BaseScene):
         for ch in SoundCh:
             SoundController.stop(ch)
 
+    def get_seeds(self):
+        return self.__seeds
+
     # endregion

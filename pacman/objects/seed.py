@@ -95,3 +95,6 @@ class SeedContainer(IDrawable):
 
     def __len__(self):
         return len(self.__seeds)
+
+    def get_seeds(self) -> list[list[bool]]:
+        return self.__seeds

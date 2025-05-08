@@ -1,12 +1,12 @@
 {
   "_MainStorage__fruit": {
     "_FruitStorage__eaten_fruits": [
+      3,
+      3,
+      3,
       1,
       1,
       1,
-      0,
-      0,
-      0,
       0
     ],
     "_FruitStorage__fruit_count": 7
@@ -16,15 +16,23 @@
     "_LevelStorage__level_count": 10,
     "_LevelStorage__unlocked": [
       [
+        34600,
+        0
+      ],
+      [
+        15280,
+        0
+      ],
+      [
         0
       ]
     ]
   },
   "_MainStorage__settings": {
-    "DIFFICULTY": 2,
+    "DIFFICULTY": 1,
     "MUTE": false,
     "_SettingsStorage__fun": false,
-    "_SettingsStorage__ia": false,
+    "_SettingsStorage__ia": true,
     "_SettingsStorage__volume": 30
   },
   "_MainStorage__skins": {
