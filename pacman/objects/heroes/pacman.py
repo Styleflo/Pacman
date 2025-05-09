@@ -1,4 +1,5 @@
 import pygame as pg
+from random import choice
 
 from pacman.data_core import EvenType, IEventful
 from pacman.misc import CellUtil
@@ -19,7 +20,7 @@ class Pacman(Character, IEventful):
         self.__dead_anim = skin_instanse.dead
         super().__init__(self.__walk_anim, loader, f"pacman/{skin_instanse.name}/aura")
         self.is_dead = False
-        self.__feature_rotate = "none"
+        self.__feature_rotate = "right"
         self.__ai_timer = 0
         self.animator.stop()
 
@@ -27,6 +28,7 @@ class Pacman(Character, IEventful):
         self.active_ia = SettingsStorage().ia
         if self.active_ia:
             self.IA = PacManIA.PacManIA(main_scene)
+            self.go()
 
 
     @property
@@ -54,6 +56,7 @@ class Pacman(Character, IEventful):
                     if self.can_rotate_to(c):
                         self.set_direction(feature__ia_rotate)
                 else:
+                    print(self.get_cell())
                     c = self.direction[self.__feature_rotate][2]
                     if self.can_rotate_to(c):
                         self.set_direction(self.__feature_rotate)

@@ -230,3 +230,6 @@ class Base(Character, IEventful):
     @property
     def name(self) -> str:
         return type(self).__name__.lower()
+
+    def get_state(self):
+        return self.state

@@ -250,4 +250,13 @@ class MainScene(BaseScene):
     def get_seeds(self):
         return self.__seeds
 
+    def get_ghosts(self):
+        return self.__ghosts
+
+    def get_pacman(self):
+        return self.pacman
+
+    def get_loader(self):
+        return self.__loader
+
     # endregion

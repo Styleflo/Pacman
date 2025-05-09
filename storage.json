@@ -1,9 +1,9 @@
 {
   "_MainStorage__fruit": {
     "_FruitStorage__eaten_fruits": [
-      3,
-      3,
-      3,
+      5,
+      4,
+      4,
       1,
       1,
       1,
@@ -33,7 +33,7 @@
     "MUTE": false,
     "_SettingsStorage__fun": false,
     "_SettingsStorage__ia": true,
-    "_SettingsStorage__volume": 30
+    "_SettingsStorage__volume": 5
   },
   "_MainStorage__skins": {
     "_SkinStorage__current": "DEFAULT",
