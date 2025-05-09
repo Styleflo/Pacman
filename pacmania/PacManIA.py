@@ -178,7 +178,6 @@ class PacManIA:
         for i in range(len(ghost_pos)):
             dist = self.dijkstra(pacman_pos, ghost_pos[i], self.get_map())[0]
             if ghosts[i].get_state() == GhostStateEnum.FRIGHTENED :
-                # Si le fantôme est effrayé, on essaie de le chasser
                 ghost_score += GHOST_FRIGHTENED_WEIGHT / (dist + 1)
             else:
                 if dist <= 2:  # Danger immédiat
