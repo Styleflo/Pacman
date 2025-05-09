@@ -134,7 +134,7 @@ class PacManIA:
                     continue
 
                 # Vérification de la collision
-                if collision_map[y][x] & direction_flags[direction] == 0:
+                if collision_map[y][x] & direction_flags[direction] == 0: #regler le probleme du bridge teleportation
                     continue
 
                 new_pos = (new_x, new_y)
@@ -148,6 +148,23 @@ class PacManIA:
         # Aucun chemin trouvé
         return float('inf'), []
 
+    def sort_directions(self, ghost, directions):
+        orientation_x, orientation_y = ghost.get_direction()
+        new_directions = copy.deepcopy(directions)
+        if orientation_x == 1:
+            if "left" in new_directions:
+                new_directions.remove("left")
+        if orientation_x == -1:
+            if "right" in new_directions:
+                new_directions.remove("right")
+        if orientation_y == 1:
+            if "up" in new_directions:
+                new_directions.remove("up")
+        if orientation_y == -1:
+            if "down" in new_directions:
+                new_directions.remove("down")
+        return new_directions
+
     def evaluation(self, pacman_pos: Tuple[int, int], ghost_pos: List[Tuple[int, int]], seeds_pos: List[Tuple[int, int]]):
 
         if seeds_pos:
@@ -157,12 +174,17 @@ class PacManIA:
             seed_score = 0
 
         ghost_score = 0
-        for ghost in ghost_pos:
-            dist = self.dijkstra(pacman_pos, ghost, self.get_map())[0]
-            if dist <= 2:  # Danger immédiat
-                ghost_score -= GHOST_AVOIDANCE_WEIGHT
+        ghosts = self.get_ghosts()
+        for i in range(len(ghost_pos)):
+            dist = self.dijkstra(pacman_pos, ghost_pos[i], self.get_map())[0]
+            if ghosts[i].get_state() == GhostStateEnum.FRIGHTENED :
+                # Si le fantôme est effrayé, on essaie de le chasser
+                ghost_score += GHOST_FRIGHTENED_WEIGHT / (dist + 1)
             else:
-                ghost_score -= GHOST_AVOIDANCE_WEIGHT / (dist + 1)
+                if dist <= 2:  # Danger immédiat
+                    ghost_score -= GHOST_AVOIDANCE_WEIGHT
+                else:
+                    ghost_score -= GHOST_AVOIDANCE_WEIGHT / (dist + 1)
 
         total_score = seed_score + ghost_score
         return total_score
@@ -197,15 +219,23 @@ class PacManIA:
         else:  # Fantômes (Min)
             legal_actions = self.get_authorised_directions(ghost_pos[agent_index-1])
             value = float('+inf')
-            for action in legal_actions:
+            ghosts = self.get_ghosts()
+            directions = self.sort_directions(ghosts[agent_index-1], legal_actions)
+
+            for action in directions:
                 successor = self.apply_direction(ghost_pos[agent_index-1], action)
                 ghost_successor = copy.deepcopy(ghost_pos)
                 ghost_successor[agent_index-1] = successor
-                ghosts = self.get_ghosts()
+
                 while next_agent !=0 and ghosts[next_agent-1].get_state() == GhostStateEnum.INDOOR:
                     next_agent = (next_agent + 1) % num_agents
                     if next_agent == 0:
                         next_depth = next_depth -1
+
+                while next_agent != 0 and self.dijkstra(pacman_pos, ghost_pos[next_agent-1], self.get_map())[0] > 2 * depth:
+                    next_agent = (next_agent + 1) % num_agents
+                    if next_agent == 0:
+                        next_depth = next_depth - 1
 
                 score, path = self.alpha_beta(pacman_pos, ghost_successor, seeds_pos, next_depth, next_agent, alpha, beta, deplacements)
                 value = min(value, score)

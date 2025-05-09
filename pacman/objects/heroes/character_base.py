@@ -86,3 +86,6 @@ class Character(RectObj, ILogical, IDrawable):
     @staticmethod
     def two_cells_dis(cell1: Tuple[int, int], cell2: Tuple[int, int]) -> float:
         return CellUtil.get_two_cells_dis(cell1, cell2)
+
+    def get_direction(self):
+        return self.shift_x, self.shift_y
