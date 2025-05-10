@@ -9,6 +9,8 @@ class PacManIA:
     def __init__(self, main_scene):
         self.main_scene = main_scene
         self.bool = False
+        self.pos = None
+        self.last_pos = None
 
     def get_map(self):
         return self.main_scene.get_loader().collision_map
@@ -26,7 +28,14 @@ class PacManIA:
         return self.main_scene.get_pacman()
 
     def get_pacman_pos(self):
-        return self.main_scene.get_pacman().get_cell()
+        pos = self.main_scene.get_pacman().get_cell() #mettre un malus pour un retour en areiere
+        if self.last_pos is None:
+            self.last_pos = pos
+            self.pos = pos
+
+        self.last_pos = self.pos
+        self.pos = pos
+        return pos
 
     def get_seeds(self):
         return self.main_scene.get_seeds().get_seeds()
@@ -165,10 +174,20 @@ class PacManIA:
                 new_directions.remove("down")
         return new_directions
 
+    def get_nearby_seeds(slef, pacman_pos, seeds_pos, radius=2):
+        px, py = pacman_pos
+        nearby_seeds = [(x, y) for x, y in seeds_pos
+                        if px - radius <= x <= px + radius and py - radius <= y <= py + radius]
+        return nearby_seeds
+
     def evaluation(self, pacman_pos: Tuple[int, int], ghost_pos: List[Tuple[int, int]], seeds_pos: List[Tuple[int, int]]):
 
         if seeds_pos:
-            closest_seed_dist = min(self.manhattan_distance(pacman_pos, seed) for seed in seeds_pos)
+            dijkstra_seed = self.get_nearby_seeds(pacman_pos, seeds_pos)
+            if dijkstra_seed:
+                closest_seed_dist = min(self.dijkstra(pacman_pos, seed, self.get_map())[0] for seed in dijkstra_seed)
+            else:
+                closest_seed_dist = min(self.manhattan_distance(pacman_pos, seed) for seed in seeds_pos)
             seed_score = SEED_WEIGHT / (closest_seed_dist + 1)
         else:
             seed_score = 0
@@ -185,10 +204,57 @@ class PacManIA:
                 else:
                     ghost_score -= GHOST_AVOIDANCE_WEIGHT / (dist + 1)
 
-        total_score = seed_score + ghost_score
+        position_score = 0
+        if self.last_pos == pacman_pos:
+            position_score -= PACMAN_RETURN_POSITION
+
+        total_score = seed_score + ghost_score + position_score
         return total_score
 
+    def evaluation2(self, pacman_pos: Tuple[int, int], ghost_pos: List[Tuple[int, int]],
+                   seeds_pos: List[Tuple[int, int]]) -> float:
 
+        # ---- 1️⃣ Calcul de la distance à la graine la plus proche ----
+        if seeds_pos:
+            dijkstra_seed = self.get_nearby_seeds(pacman_pos, seeds_pos)
+
+            if dijkstra_seed:
+                closest_seed_dist = min(self.dijkstra(pacman_pos, seed, self.get_map())[0] for seed in dijkstra_seed)
+            else:
+                # Si aucune graine proche, on prend la distance Manhattan (plus rapide)
+                closest_seed_dist = min(self.manhattan_distance(pacman_pos, seed) for seed in seeds_pos)
+
+            seed_score = SEED_WEIGHT / (closest_seed_dist + 1)
+        else:
+            seed_score = 0
+
+        # ---- 2️⃣ Calcul du score par rapport aux fantômes ----
+        ghost_score = 0
+        ghosts = self.get_ghosts()
+
+        for i, ghost in enumerate(ghosts):
+            # Si le fantôme est trop loin, on utilise Manhattan pour économiser du calcul
+            if self.manhattan_distance(pacman_pos, ghost_pos[i]) > 5:
+                dist = self.manhattan_distance(pacman_pos, ghost_pos[i])
+            else:
+                dist = self.dijkstra(pacman_pos, ghost_pos[i], self.get_map())[0]
+
+            if ghost.get_state() == GhostStateEnum.FRIGHTENED:
+                ghost_score += GHOST_FRIGHTENED_WEIGHT / (dist + 1)
+            else:
+                if dist <= 2:
+                    ghost_score -= GHOST_AVOIDANCE_WEIGHT
+                else:
+                    ghost_score -= GHOST_AVOIDANCE_WEIGHT / (dist + 1)
+
+        # ---- 3️⃣ Score de position pour éviter les mouvements répétitifs ----
+        position_score = 0
+        if self.last_pos == pacman_pos:
+            position_score -= PACMAN_RETURN_POSITION
+
+        # ---- 4️⃣ Calcul du score total ----
+        total_score = seed_score + ghost_score + position_score
+        return total_score
 
     def alpha_beta(self, pacman_pos, ghost_pos, seeds_pos, depth, agent_index, alpha, beta, deplacements):
         num_agents = 5

@@ -89,3 +89,6 @@ class Character(RectObj, ILogical, IDrawable):
 
     def get_direction(self):
         return self.shift_x, self.shift_y
+
+    def get_speed(self):
+        return self.speed
