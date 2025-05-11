@@ -191,12 +191,6 @@ class PacManIA:
             for direction in directions:
                 new_x, new_y = self.apply_direction((x, y), direction)
 
-                # === Gérer les téléportations ===
-                if new_x == -1:  # Sortie à gauche -> téléportation droite
-                    new_x = cols - 1
-                elif new_x == cols:  # Sortie à droite -> téléportation gauche
-                    new_x = 0
-
                 # Vérification des limites verticales
                 if not (0 <= new_y < rows):
                     continue
@@ -335,7 +329,7 @@ class PacManIA:
 
                 map_data = self.get_map()
                 # Si un fantôme est à plus de 2 * deeph de distance (dijkstra) alors on l'ignore
-                while next_agent != 0 and self.dijkstra(pacman_pos, ghost_pos[next_agent-1], map_data)[0] > 2 * depth:
+                while next_agent != 0 and self.dijkstra(pacman_pos, ghost_pos[next_agent-1], map_data)[0] > 3 * depth:
                     next_agent = (next_agent + 1) % num_agents
                     if next_agent == 0:
                         next_depth = next_depth - 1
