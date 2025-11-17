@@ -135,7 +135,7 @@ class PacManIA:
                 if not (0 <= new_x < cols and 0 <= new_y < rows):
                     continue
                 # Vérification de la collision
-                if collision_map[y][x]  & direction_flags[direction] == 0: #regler le probleme du bridge teleportation
+                if collision_map[y][x]  & direction_flags[direction] == 0:
                     continue
                 new_pos = (new_x, new_y)
                 new_cost = cost + 1
@@ -329,7 +329,7 @@ class PacManIA:
 
                 map_data = self.get_map()
                 # Si un fantôme est à plus de 2 * deeph de distance (dijkstra) alors on l'ignore
-                while next_agent != 0 and self.dijkstra(pacman_pos, ghost_pos[next_agent-1], map_data)[0] > 3 * depth:
+                while next_agent != 0 and self.dijkstra(pacman_pos, ghost_pos[next_agent-1], map_data)[0] > DETECTION_GHOTS_AREA * depth:
                     next_agent = (next_agent + 1) % num_agents
                     if next_agent == 0:
                         next_depth = next_depth - 1
